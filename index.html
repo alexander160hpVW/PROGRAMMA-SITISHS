@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="el">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Εβδομαδιαίο Μενού</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial, sans-serif;
+font-family:Arial;
 background:#f4f4f4;
 text-align:center;
 }
@@ -20,11 +22,7 @@ margin:auto;
 padding:20px;
 }
 
-h1{
-margin-bottom:20px;
-}
-
-.menu-image{
+img{
 width:100%;
 max-width:900px;
 height:auto;
@@ -33,6 +31,7 @@ box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
 </style>
+
 </head>
 
 <body>
@@ -41,13 +40,13 @@ box-shadow:0 5px 15px rgba(0,0,0,0.2);
 
 <h1>Μενού Εβδομάδας</h1>
 
-<img id="menuImage" class="menu-image" src="menu1.png" alt="Menu εβδομάδας">
+<img id="menuImage" src="menu1.png" alt="Menu">
 
 </div>
 
 <script>
 
-async function getInternetDate(){
+async function getDate(){
 
 try{
 
@@ -63,23 +62,41 @@ return new Date();
 
 }
 
-function getWeekSinceStartOfYear(date){
+function getMonday(date){
 
-const start = new Date(date.getFullYear(),0,1);
+const day = date.getDay();
+const diff = date.getDate() - day + (day === 0 ? -6 : 1);
 
-const diff = date - start;
+const monday = new Date(date);
+monday.setDate(diff);
 
-const oneWeek = 1000 * 60 * 60 * 24 * 7;
+return monday;
 
-return Math.floor(diff / oneWeek);
+}
+
+function firstMondayOfYear(year){
+
+const d = new Date(year,0,1);
+
+while(d.getDay() !== 1){
+d.setDate(d.getDate()+1);
+}
+
+return d;
 
 }
 
 async function loadMenu(){
 
-const today = await getInternetDate();
+const today = await getDate();
 
-const week = getWeekSinceStartOfYear(today);
+const monday = getMonday(today);
+
+const firstMonday = firstMondayOfYear(today.getFullYear());
+
+const diff = monday - firstMonday;
+
+const week = Math.floor(diff / (7*24*60*60*1000));
 
 const menuNumber = (week % 5) + 1;
 
